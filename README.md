@@ -1,13 +1,13 @@
-# Project 3: Event Planning and Coordination Brief
+# Project C: Event Planning & Coordination Brief
 
-Interview the Event and Operations Coordinator, then build and run an Agent Skill that turns the provided attendee, budget, calendar, vendor, and event-brief sources into normalized evidence and a human-reviewable event plan.
+Build and run an Agent Skill that helps an Event and Operations Manager combine changing event goals, attendee signals, budget and vendor records, official venue evidence, an official floor plan or image, and calendar constraints into a traceable planning package for human review.
 
 ## Start
 
 1. Fork this repository and work on your fork's `main` branch.
-2. Interview the Gemini stakeholder in English. Explain which source you need and why; links are provided only when relevant.
-3. Implement, run, and validate the skill.
-4. Push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
+2. Use the interview link provided by your instructor to understand the manager's workflow, sources, constraints, uncertainty, and approval boundaries.
+3. Implement one documented command that fetches the disclosed current sources, creates a snapshot, compares options, produces every required artifact, and validates the package.
+4. Run the command, review the results, and push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
 
 Do not create a separate Session Log. The supported environment records the work automatically.
 
@@ -21,20 +21,39 @@ event-planning-coordination-brief/
 └── references/
     └── <focused operating references>
 deliverables/
-├── normalized/
-│   ├── attendee_signals.csv
-│   ├── budget.csv
-│   ├── calendar_constraints.csv
-│   └── vendor_quotes.csv
-└── report.md
+├── snapshot.json
+├── snapshot-files/
+│   └── <retrieved floor plan or image evidence>
+├── vendor-comparison.csv
+├── event-plan.md
+├── event-calendar.ics
+└── draft-communications.md
 ```
 
-Follow the [Agent Skills specification](https://agentskills.io/specification). The `SKILL.md` frontmatter must include `name: event-planning-coordination-brief` and a useful `description`. Document the runtime, inputs, exact command, outputs, validation, and safe-failure behavior. Validate with:
+Minimum artifact contract:
+
+- `snapshot.json` identifies the run, event parameters, and status. Its evidence records identify source role and type, locator, retrieval time and result, available version metadata, content hash when content is captured, and a resolvable local evidence reference. Its decision state separates hard constraints, preferences, assumptions, unknowns, conflicts, options, rejected options with reasons, unresolved items, affected dependencies, learner decisions, and required approvals.
+- On a successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes used for spatial or accessibility claims. Snapshot observations reference that local file and a page, region, or equivalent locator.
+- `vendor-comparison.csv` compares materially different options, including availability or verification state, cost and currency where known, feasibility, material constraints, evidence references, trade-offs, and unresolved conditions.
+- `event-plan.md` states the objective, planning basis, options, recommendation or deferral, feasibility, schedule, budget, accessibility and safety considerations, risks, unknowns, change impacts, and approval requests.
+- `event-calendar.ics` is a valid draft calendar consistent with the selected or proposed plan. `draft-communications.md` contains clearly unsent drafts that preserve uncertainty and approval dependencies.
+
+Follow the [Agent Skills specification](https://agentskills.io/specification). The `SKILL.md` frontmatter must include `name: event-planning-coordination-brief` and a useful `description`. Document prerequisites, runtime inputs, the exact command, output paths, validation, and material failure behavior. Validate the package with:
 
 ```bash
 skills-ref validate ./event-planning-coordination-brief
 ```
 
-The implementation must recognize source roles from schemas rather than fixed filenames or column order, preserve source versions, separate hard constraints from preferences, compare vendor capacity, accessibility, availability, expiry, and cost, and surface approval needs or unresolved conflicts. It must not send invitations, commit to a vendor, make a payment, alter a production calendar, or invent missing facts.
+## Runtime evidence
 
-Keep secrets and hidden assessment material out of the repository. Before pushing, run the documented command from a clean checkout and confirm that `report.md` agrees with all normalized CSV files.
+Each invocation must read the current disclosed structured records, official venue sources, required official floor-plan or image evidence, and calendar data. Video evidence is optional. Do not use bundled answers or a silent cached copy as the primary source.
+
+`deliverables/snapshot.json` is part of the submitted result. Record the run context, source-specific identity and retrieval results, evidence actually used, hard constraints, preferences, assumptions, unknowns, conflicts, considered and rejected options, unresolved items, affected dependencies, approvals, and your material design decisions and rationale. Media-derived observations need a page, region, timestamp, or equivalent locator.
+
+You do not need to reconstruct an earlier external-site version. If one vendor quote or record is missing or cannot be verified, continue supported comparison work and mark that vendor record unavailable or unverified. If required image evidence is unavailable, do not make dependent spatial or accessibility claims.
+
+## Planning and safety boundary
+
+Compare multiple materially different options, explain feasibility and trade-offs, and keep every affected artifact consistent when a material input changes. The calendar and communications are drafts. The skill must not expose credentials, book, pay, invite, commit to a vendor, alter a source, write to a production calendar, or bypass Operations or budget approval.
+
+Before pushing, run the documented command from a clean checkout and confirm that the snapshot, comparison, plan, calendar, and communication drafts agree.
