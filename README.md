@@ -5,7 +5,7 @@ Build and run an Agent Skill that helps an Event and Operations Manager combine 
 ## Start
 
 1. Fork this repository and work on your fork's `main` branch.
-2. Use the interview link provided by your instructor to understand the manager's workflow, sources, constraints, uncertainty, and approval boundaries.
+2. Open the [Project C stakeholder interview](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) to understand the manager's workflow, sources, constraints, uncertainty, and approval boundaries.
 3. Implement one documented command that fetches the disclosed current sources, creates a snapshot, compares options, produces every required artifact, and validates the package.
 4. Run the command, review the results, and push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
 
