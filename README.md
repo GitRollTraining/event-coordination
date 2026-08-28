@@ -14,6 +14,7 @@ Do not create a separate Session Log. The supported environment records the work
 ## Required submission
 
 ```text
+snapshot.schema.json  # provided contract; keep unchanged
 event-planning-coordination-brief/
 ├── SKILL.md
 ├── scripts/
@@ -32,7 +33,12 @@ deliverables/
 
 Minimum artifact contract:
 
-- `snapshot.json` identifies the run, event parameters, and status. Its evidence records identify source role and type, locator, retrieval time and result, available version metadata, content hash when content is captured, and a resolvable local evidence reference. Its decision state separates hard constraints, preferences, assumptions, unknowns, conflicts, options, rejected options with reasons, unresolved items, affected dependencies, learner decisions, and required approvals.
+- `snapshot.json` must conform to [`snapshot.schema.json`](snapshot.schema.json). It records every attempted source, including failed or unused attempts, and marks whether retrieved evidence was used for claims.
+- Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is `retrieved`, `unavailable`, `invalid`, `unverified`, or `stale`. Option feasibility is `feasible`, `infeasible`, `conditional`, or `unverified`.
+- `complete` means the normal package passed validation; `partial` means supported work remains usable with non-blocking gaps; `blocked` means required evidence prevents dependent claims but a reviewable failure package exists; `failed` means no reviewable package beyond the failure record could be produced. Record the status that actually occurred—do not simulate every state.
+- For source attempts, use `retrieved` only after content checks pass; `unavailable` when it cannot be obtained; `invalid` when the response fails format or semantic checks; `unverified` when identity, authority, or freshness cannot be established; and `stale` when retrieved content is too old for a current claim.
+- Keep every required `decision_state` collection in the JSON. Use an empty array when that class did not occur; do not invent records merely to demonstrate a status.
+- Record the selected option ID in `selected_recommendation`, or `null` when the recommendation is deferred.
 - On a successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes used for spatial or accessibility claims. Snapshot observations reference that local file and a page, region, or equivalent locator.
 - `vendor-comparison.csv` compares materially different options, including availability or verification state, cost and currency where known, feasibility, material constraints, evidence references, trade-offs, and unresolved conditions.
 - `event-plan.md` states the objective, planning basis, options, recommendation or deferral, feasibility, schedule, budget, accessibility and safety considerations, risks, unknowns, change impacts, and approval requests.
@@ -48,7 +54,7 @@ skills-ref validate ./event-planning-coordination-brief
 
 Each invocation must read the current disclosed structured records, official venue sources, required official floor-plan or image evidence, and calendar data. Video evidence is optional. Do not use bundled answers or a silent cached copy as the primary source.
 
-`deliverables/snapshot.json` is part of the submitted result. Record the run context, source-specific identity and retrieval results, evidence actually used, hard constraints, preferences, assumptions, unknowns, conflicts, considered and rejected options, unresolved items, affected dependencies, approvals, and your material design decisions and rationale. Media-derived observations need a page, region, timestamp, or equivalent locator.
+`deliverables/snapshot.json` is part of the submitted result. Record the run context, every attempted source and retrieval result, evidence actually used, hard constraints, preferences, assumptions, unknowns, conflicts, considered and rejected options, unresolved items, affected dependencies, approvals, and your material design decisions and rationale. Media-derived observations need a page, region, timestamp, or equivalent locator. Validate the snapshot against `snapshot.schema.json` before reporting a successful run.
 
 You do not need to reconstruct an earlier external-site version. If one vendor quote or record is missing or cannot be verified, continue supported comparison work and mark that vendor record unavailable or unverified. If required image evidence is unavailable, do not make dependent spatial or accessibility claims.
 

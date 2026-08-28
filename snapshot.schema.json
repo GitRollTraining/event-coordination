@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitroll.dev/curriculum/projects/event-coordination/snapshot.schema.json",
+  "title": "Event Coordination Run Snapshot",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["schema_version", "run", "evidence", "decision_state"],
+  "properties": {
+    "schema_version": {"const": "event-coordination-snapshot/1"},
+    "run": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "as_of", "event_parameters", "status"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "as_of": {"type": "string", "format": "date-time"},
+        "event_parameters": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": true
+        },
+        "status": {
+          "enum": ["complete", "partial", "blocked", "failed"]
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/evidenceRecord"}
+    },
+    "decision_state": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "hard_constraints",
+        "preferences",
+        "assumptions",
+        "unknowns",
+        "conflicts",
+        "options",
+        "rejected_options",
+        "selected_recommendation",
+        "unresolved_items",
+        "affected_dependencies",
+        "learner_decisions",
+        "approval_requirements"
+      ],
+      "properties": {
+        "hard_constraints": {"$ref": "#/$defs/records"},
+        "preferences": {"$ref": "#/$defs/records"},
+        "assumptions": {"$ref": "#/$defs/records"},
+        "unknowns": {"$ref": "#/$defs/records"},
+        "conflicts": {"$ref": "#/$defs/records"},
+        "options": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/optionRecord"}
+        },
+        "rejected_options": {"$ref": "#/$defs/records"},
+        "selected_recommendation": {"$ref": "#/$defs/nullableNonEmptyString"},
+        "unresolved_items": {"$ref": "#/$defs/records"},
+        "affected_dependencies": {"$ref": "#/$defs/records"},
+        "learner_decisions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/designDecisionRecord"}
+        },
+        "approval_requirements": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/approvalRecord"}
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "run": {
+            "properties": {"status": {"enum": ["complete", "partial", "blocked"]}},
+            "required": ["status"]
+          }
+        },
+        "required": ["run"]
+      },
+      "then": {"properties": {"evidence": {"minItems": 1}}}
+    }
+  ],
+  "$defs": {
+    "nullableNonEmptyString": {
+      "type": ["string", "null"],
+      "minLength": 1
+    },
+    "mediaLocator": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["kind", "value"],
+      "properties": {
+        "kind": {"enum": ["page-region", "timestamp", "section", "cell-range", "other"]},
+        "value": {"type": "string", "minLength": 1}
+      }
+    },
+    "evidenceRecord": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "source_role",
+        "locator",
+        "retrieved_at",
+        "retrieval_status",
+        "content_type",
+        "version_metadata",
+        "used_for_claims",
+        "content_hash",
+        "local_reference",
+        "observations"
+      ],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "source_role": {
+          "enum": ["event-brief", "attendee-signals", "budget", "vendor-record", "venue-page", "floor-plan-or-image", "calendar", "video", "other"]
+        },
+        "locator": {"type": "string", "minLength": 1},
+        "retrieved_at": {"type": "string", "format": "date-time"},
+        "retrieval_status": {
+          "enum": ["retrieved", "unavailable", "invalid", "unverified", "stale"]
+        },
+        "content_type": {"type": "string", "minLength": 1},
+        "version_metadata": {"type": ["object", "null"]},
+        "used_for_claims": {"type": "boolean"},
+        "content_hash": {
+          "anyOf": [
+            {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+            {"type": "null"}
+          ]
+        },
+        "local_reference": {"$ref": "#/$defs/nullableNonEmptyString"},
+        "observations": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/observation"}
+        },
+        "captured_evidence": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "object", "minProperties": 1},
+            {"type": "array", "minItems": 1}
+          ]
+        }
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"used_for_claims": {"const": true}}, "required": ["used_for_claims"]},
+          "then": {
+            "properties": {"retrieval_status": {"const": "retrieved"}},
+            "anyOf": [
+              {"required": ["captured_evidence"]},
+              {"properties": {"local_reference": {"type": "string", "minLength": 1}}, "required": ["local_reference"]}
+            ]
+          }
+        },
+        {
+          "if": {
+            "anyOf": [
+              {"required": ["captured_evidence"]},
+              {"properties": {"local_reference": {"type": "string", "minLength": 1}}, "required": ["local_reference"]}
+            ]
+          },
+          "then": {
+            "properties": {"content_hash": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}}
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "source_role": {"const": "floor-plan-or-image"},
+              "retrieval_status": {"const": "retrieved"},
+              "used_for_claims": {"const": true}
+            },
+            "required": ["source_role", "retrieval_status", "used_for_claims"]
+          },
+          "then": {
+            "properties": {
+              "local_reference": {"type": "string", "minLength": 1},
+              "observations": {"minItems": 1}
+            }
+          }
+        }
+      ]
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "summary", "locator", "used_by"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "locator": {"$ref": "#/$defs/mediaLocator"},
+        "used_by": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        }
+      }
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["id", "summary", "evidence_ids", "owner", "rationale"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "summary": {"type": "string", "minLength": 1},
+        "evidence_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1},
+          "uniqueItems": true
+        },
+        "owner": {"$ref": "#/$defs/nullableNonEmptyString"},
+        "rationale": {"type": "string", "minLength": 1}
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/record"}
+    },
+    "optionRecord": {
+      "allOf": [
+        {"$ref": "#/$defs/record"},
+        {
+          "type": "object",
+          "required": ["feasibility"],
+          "properties": {
+            "feasibility": {
+              "enum": ["feasible", "infeasible", "conditional", "unverified"]
+            }
+          }
+        }
+      ]
+    },
+    "approvalRecord": {
+      "allOf": [
+        {"$ref": "#/$defs/record"},
+        {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {"enum": ["pending", "approved", "rejected", "not-required"]}
+          }
+        }
+      ]
+    },
+    "designDecisionRecord": {
+      "allOf": [
+        {"$ref": "#/$defs/record"},
+        {
+          "type": "object",
+          "required": ["tradeoffs"],
+          "properties": {
+            "tradeoffs": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"type": "string", "minLength": 1}
+            }
+          }
+        }
+      ]
+    }
+  }
+}
