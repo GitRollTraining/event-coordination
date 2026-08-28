@@ -1,19 +1,20 @@
-# Project 3: Event Planning and Coordination Brief
+# Project C: Event Planning & Coordination Brief
 
-Interview the Event and Operations Coordinator, then build and run an Agent Skill that turns the provided attendee, budget, calendar, vendor, and event-brief sources into normalized evidence and a human-reviewable event plan.
+Build and run an Agent Skill that helps an Event and Operations Manager combine changing event goals, attendee signals, budget and vendor records, official venue evidence, an official floor plan or image, and calendar constraints into a traceable planning package for human review.
 
 ## Start
 
 1. Fork this repository and work on your fork's `main` branch.
-2. Interview the Gemini stakeholder in English. Explain which source you need and why; links are provided only when relevant.
-3. Implement, run, and validate the skill.
-4. Push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
+2. Open the [Project C stakeholder interview](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) to understand the manager's workflow, sources, constraints, uncertainty, and approval boundaries.
+3. Implement one documented command that fetches the disclosed current sources, writes each required workflow snapshot when that stage completes, compares options, produces every final artifact, and validates the package.
+4. Run the command, review the results, and push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
 
 Do not create a separate Session Log. The supported environment records the work automatically.
 
 ## Required submission
 
 ```text
+snapshot.schema.json  # provided contract; keep unchanged
 event-planning-coordination-brief/
 ├── SKILL.md
 ├── scripts/
@@ -21,20 +22,66 @@ event-planning-coordination-brief/
 └── references/
     └── <focused operating references>
 deliverables/
-├── normalized/
-│   ├── attendee_signals.csv
-│   ├── budget.csv
-│   ├── calendar_constraints.csv
-│   └── vendor_quotes.csv
-└── report.md
+├── snapshots/
+│   ├── 01-scope-and-approval-gates.json
+│   ├── 02-source-capture.json
+│   ├── 03-constraint-model.json
+│   ├── 04-planning-baseline.json
+│   ├── 05-option-generation.json
+│   ├── 06-feasibility-testing.json
+│   ├── 07-decision-and-approval.json
+│   ├── 08-draft-propagation.json
+│   └── 09-publication-validation.json
+├── snapshot-files/
+│   └── <retrieved floor plan or image evidence>
+├── vendor-comparison.csv
+├── event-plan.md
+├── event-calendar.ics
+└── draft-communications.md
 ```
 
-Follow the [Agent Skills specification](https://agentskills.io/specification). The `SKILL.md` frontmatter must include `name: event-planning-coordination-brief` and a useful `description`. Document the runtime, inputs, exact command, outputs, validation, and safe-failure behavior. Validate with:
+## Required snapshot chain
+
+Every stage file must conform to [`snapshot.schema.json`](snapshot.schema.json). All nine use one `run_id`. From stage 2 onward, `predecessor` identifies and hashes the immediately preceding file. Each stage names the upstream record IDs it consumed and records it produced.
+
+| Stage | Required state |
+|---|---|
+| 01 | objective, deadline, owners, approval gates |
+| 02 | every structured, web, image, video, and calendar source attempt |
+| 03 | hard constraints, preferences, assumptions, unknowns, conflicts |
+| 04 | dated headcount, schedule, budget, accessibility baseline |
+| 05 | materially different options and early rejection reasons |
+| 06 | option-level feasibility and unresolved conditions |
+| 07 | trade-offs, recommendation or deferral, learner decisions, approvals |
+| 08 | propagated draft artifacts, affected dependencies, unresolved items |
+| 09 | final artifact paths and hashes, validation and publication status |
+
+Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is `retrieved`, `unavailable`, `invalid`, `unverified`, or `stale`. Option feasibility is `feasible`, `infeasible`, `conditional`, or `unverified`. Missing or conflicting records must remain traceable until evidence or a human decision resolves them.
+
+On successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes. Stage 02 records the file and page, region, timestamp, or equivalent locator; dependent stages consume its evidence ID.
+
+## Final artifacts
+
+- `vendor-comparison.csv` compares materially different options, including availability or verification state, cost and currency where known, feasibility, material constraints, evidence references, trade-offs, and unresolved conditions.
+- `event-plan.md` states the objective, planning basis, options, recommendation or deferral, feasibility, schedule, budget, accessibility and safety considerations, risks, unknowns, change impacts, and approval requests.
+- `event-calendar.ics` is a valid draft calendar consistent with the selected or proposed plan. `draft-communications.md` contains clearly unsent drafts that preserve uncertainty and approval dependencies.
+
+Follow the [Agent Skills specification](https://agentskills.io/specification). The `SKILL.md` frontmatter must include `name: event-planning-coordination-brief` and a useful `description`. Document prerequisites, runtime inputs, the exact command, output paths, validation, and material failure behavior. Validate the package with:
 
 ```bash
 skills-ref validate ./event-planning-coordination-brief
 ```
 
-The implementation must recognize source roles from schemas rather than fixed filenames or column order, preserve source versions, separate hard constraints from preferences, compare vendor capacity, accessibility, availability, expiry, and cost, and surface approval needs or unresolved conflicts. It must not send invitations, commit to a vendor, make a payment, alter a production calendar, or invent missing facts.
+## Runtime evidence
 
-Keep secrets and hidden assessment material out of the repository. Before pushing, run the documented command from a clean checkout and confirm that `report.md` agrees with all normalized CSV files.
+Each invocation must read the current disclosed structured records, official venue sources, required official floor-plan or image evidence, and calendar data. Video evidence is optional. Do not use bundled answers or a silent cached copy as the primary source.
+
+The nine snapshots are part of the submitted result. Write them during the workflow, not retrospectively after the final drafts. Preserve predecessor hashes and stable record IDs so another reviewer can follow source evidence through constraints, options, feasibility, decisions, and propagated artifacts.
+
+You do not need to reconstruct an earlier external-site version. If one vendor quote or record is missing or cannot be verified, continue supported comparison work and mark that vendor record unavailable or unverified. If required image evidence is unavailable, do not make dependent spatial or accessibility claims.
+
+## Planning and safety boundary
+
+Compare multiple materially different options, explain feasibility and trade-offs, and keep every affected artifact consistent when a material input changes. The calendar and communications are drafts. The skill must not expose credentials, book, pay, invite, commit to a vendor, alter a source, write to a production calendar, or bypass Operations or budget approval.
+
+Before pushing, run the documented command from a clean checkout and confirm that every snapshot passes the schema, the lineage is intact, and the comparison, plan, calendar, and communication drafts agree with stages 07–09.
