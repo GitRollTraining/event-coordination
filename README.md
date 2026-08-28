@@ -6,7 +6,7 @@ Build and run an Agent Skill that helps an Event and Operations Manager combine 
 
 1. Fork this repository and work on your fork's `main` branch.
 2. Open the [Project C stakeholder interview](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) to understand the manager's workflow, sources, constraints, uncertainty, and approval boundaries.
-3. Implement one documented command that fetches the disclosed current sources, creates a snapshot, compares options, produces every required artifact, and validates the package.
+3. Implement one documented command that fetches the disclosed current sources, writes each required workflow snapshot when that stage completes, compares options, produces every final artifact, and validates the package.
 4. Run the command, review the results, and push the complete repository to `main` without changing or deleting `entire/checkpoints/v1`.
 
 Do not create a separate Session Log. The supported environment records the work automatically.
@@ -22,7 +22,16 @@ event-planning-coordination-brief/
 └── references/
     └── <focused operating references>
 deliverables/
-├── snapshot.json
+├── snapshots/
+│   ├── 01-scope-and-approval-gates.json
+│   ├── 02-source-capture.json
+│   ├── 03-constraint-model.json
+│   ├── 04-planning-baseline.json
+│   ├── 05-option-generation.json
+│   ├── 06-feasibility-testing.json
+│   ├── 07-decision-and-approval.json
+│   ├── 08-draft-propagation.json
+│   └── 09-publication-validation.json
 ├── snapshot-files/
 │   └── <retrieved floor plan or image evidence>
 ├── vendor-comparison.csv
@@ -31,15 +40,28 @@ deliverables/
 └── draft-communications.md
 ```
 
-Minimum artifact contract:
+## Required snapshot chain
 
-- `snapshot.json` must conform to [`snapshot.schema.json`](snapshot.schema.json). It records every attempted source, including failed or unused attempts, and marks whether retrieved evidence was used for claims.
-- Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is `retrieved`, `unavailable`, `invalid`, `unverified`, or `stale`. Option feasibility is `feasible`, `infeasible`, `conditional`, or `unverified`.
-- `complete` means the normal package passed validation; `partial` means supported work remains usable with non-blocking gaps; `blocked` means required evidence prevents dependent claims but a reviewable failure package exists; `failed` means no reviewable package beyond the failure record could be produced. Record the status that actually occurred—do not simulate every state.
-- For source attempts, use `retrieved` only after content checks pass; `unavailable` when it cannot be obtained; `invalid` when the response fails format or semantic checks; `unverified` when identity, authority, or freshness cannot be established; and `stale` when retrieved content is too old for a current claim.
-- Keep every required `decision_state` collection in the JSON. Use an empty array when that class did not occur; do not invent records merely to demonstrate a status.
-- Record the selected option ID in `selected_recommendation`, or `null` when the recommendation is deferred.
-- On a successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes used for spatial or accessibility claims. Snapshot observations reference that local file and a page, region, or equivalent locator.
+Every stage file must conform to [`snapshot.schema.json`](snapshot.schema.json). All nine use one `run_id`. From stage 2 onward, `predecessor` identifies and hashes the immediately preceding file. Each stage names the upstream record IDs it consumed and records it produced.
+
+| Stage | Required state |
+|---|---|
+| 01 | objective, deadline, owners, approval gates |
+| 02 | every structured, web, image, video, and calendar source attempt |
+| 03 | hard constraints, preferences, assumptions, unknowns, conflicts |
+| 04 | dated headcount, schedule, budget, accessibility baseline |
+| 05 | materially different options and early rejection reasons |
+| 06 | option-level feasibility and unresolved conditions |
+| 07 | trade-offs, recommendation or deferral, learner decisions, approvals |
+| 08 | propagated draft artifacts, affected dependencies, unresolved items |
+| 09 | final artifact paths and hashes, validation and publication status |
+
+Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is `retrieved`, `unavailable`, `invalid`, `unverified`, or `stale`. Option feasibility is `feasible`, `infeasible`, `conditional`, or `unverified`. Missing or conflicting records must remain traceable until evidence or a human decision resolves them.
+
+On successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes. Stage 02 records the file and page, region, timestamp, or equivalent locator; dependent stages consume its evidence ID.
+
+## Final artifacts
+
 - `vendor-comparison.csv` compares materially different options, including availability or verification state, cost and currency where known, feasibility, material constraints, evidence references, trade-offs, and unresolved conditions.
 - `event-plan.md` states the objective, planning basis, options, recommendation or deferral, feasibility, schedule, budget, accessibility and safety considerations, risks, unknowns, change impacts, and approval requests.
 - `event-calendar.ics` is a valid draft calendar consistent with the selected or proposed plan. `draft-communications.md` contains clearly unsent drafts that preserve uncertainty and approval dependencies.
@@ -54,7 +76,7 @@ skills-ref validate ./event-planning-coordination-brief
 
 Each invocation must read the current disclosed structured records, official venue sources, required official floor-plan or image evidence, and calendar data. Video evidence is optional. Do not use bundled answers or a silent cached copy as the primary source.
 
-`deliverables/snapshot.json` is part of the submitted result. Record the run context, every attempted source and retrieval result, evidence actually used, hard constraints, preferences, assumptions, unknowns, conflicts, considered and rejected options, unresolved items, affected dependencies, approvals, and your material design decisions and rationale. Media-derived observations need a page, region, timestamp, or equivalent locator. Validate the snapshot against `snapshot.schema.json` before reporting a successful run.
+The nine snapshots are part of the submitted result. Write them during the workflow, not retrospectively after the final drafts. Preserve predecessor hashes and stable record IDs so another reviewer can follow source evidence through constraints, options, feasibility, decisions, and propagated artifacts.
 
 You do not need to reconstruct an earlier external-site version. If one vendor quote or record is missing or cannot be verified, continue supported comparison work and mark that vendor record unavailable or unverified. If required image evidence is unavailable, do not make dependent spatial or accessibility claims.
 
@@ -62,4 +84,4 @@ You do not need to reconstruct an earlier external-site version. If one vendor q
 
 Compare multiple materially different options, explain feasibility and trade-offs, and keep every affected artifact consistent when a material input changes. The calendar and communications are drafts. The skill must not expose credentials, book, pay, invite, commit to a vendor, alter a source, write to a production calendar, or bypass Operations or budget approval.
 
-Before pushing, run the documented command from a clean checkout and confirm that the snapshot, comparison, plan, calendar, and communication drafts agree.
+Before pushing, run the documented command from a clean checkout and confirm that every snapshot passes the schema, the lineage is intact, and the comparison, plan, calendar, and communication drafts agree with stages 07–09.
