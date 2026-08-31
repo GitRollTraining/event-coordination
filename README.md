@@ -60,6 +60,17 @@ Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is
 
 On successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes. Stage 02 records the file and page, region, timestamp, or equivalent locator; dependent stages consume its evidence ID.
 
+## Decision behavior
+
+The nine files are an ordered audit trail, but the planning workflow must represent decisions and re-planning:
+
+- unavailable required floor-plan evidence suppresses dependent spatial or accessibility claims; one unavailable vendor record only narrows the supported comparison;
+- an option that fails a hard constraint is rejected, while insufficient evidence remains unresolved rather than favorable;
+- if no option is feasible, explicitly defer and identify what evidence or constraint must change;
+- when feasible options do not dominate one another, choose and justify a practical trade-off policy or defer to the human owners;
+- a material change returns to the earliest affected constraint, baseline, option, feasibility, decision, or draft stage and regenerates affected downstream work;
+- calendars and communications remain drafts until Operations and budget owners decide.
+
 ## Final artifacts
 
 - `vendor-comparison.csv` compares materially different options, including availability or verification state, cost and currency where known, feasibility, material constraints, evidence references, trade-offs, and unresolved conditions.
