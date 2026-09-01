@@ -31,9 +31,9 @@ deliverables/
 │   ├── 06-feasibility-testing.json
 │   ├── 07-decision-and-approval.json
 │   ├── 08-draft-propagation.json
-│   └── 09-publication-validation.json
-├── snapshot-files/
-│   └── <retrieved floor plan or image evidence>
+│   ├── 09-publication-validation.json
+│   └── evidence/
+│       └── <retrieved floor plan or image evidence>
 ├── vendor-comparison.csv
 ├── event-plan.md
 ├── event-calendar.ics
@@ -58,7 +58,7 @@ Every stage file must conform to [`snapshot.schema.json`](snapshot.schema.json).
 
 Run status is `complete`, `partial`, `blocked`, or `failed`. Retrieval status is `retrieved`, `unavailable`, `invalid`, `unverified`, or `stale`. Option feasibility is `feasible`, `infeasible`, `conditional`, or `unverified`. Missing or conflicting records must remain traceable until evidence or a human decision resolves them.
 
-On successful image retrieval, `snapshot-files/` preserves the official floor-plan or image bytes. Stage 02 records the file and page, region, timestamp, or equivalent locator; dependent stages consume its evidence ID.
+On successful image retrieval, `snapshots/evidence/` preserves the official floor-plan or image bytes as part of the assessed run snapshot. Stage 02 records the file and page, region, timestamp, or equivalent locator; dependent stages consume its evidence ID.
 
 ## Decision behavior
 
