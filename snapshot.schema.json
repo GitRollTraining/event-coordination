@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://gitroll.dev/curriculum/projects/event-coordination/snapshot.schema.json",
+  "$id": "https://gitroll.dev/curriculum/challenges/event-coordination/snapshot.schema.json",
   "title": "Event Coordination Stage Snapshot",
   "type": "object",
   "additionalProperties": true,
