@@ -2,9 +2,20 @@
 
 You have joined Quillhaven Academy as an automation specialist. The Event and Operations Manager repeatedly turns changing event goals, attendee signals, budgets, vendor records, official venue information, a floor plan, and calendar constraints into a plan for human review. The current manual process is slow, difficult to trace, and easy to make inconsistent when an input changes.
 
+## Get a working copy
+
+Public starter: [GitRollTraining/event-coordination](https://github.com/GitRollTraining/event-coordination). Use a Git-enabled terminal in the supplied Agent Skills-capable coding environment:
+
+```bash
+git clone https://github.com/GitRollTraining/event-coordination.git
+cd event-coordination
+```
+
+Read this README from that working-copy root. The starter supplies instructions and inputs; you create the Skill and its outputs. Keep credentials out of the repository. The facilitator supplies the supported runtime, read-only source access and assessed submission/capture route; report missing setup to that owner. The public starter is not an assigned submission destination. For a pre-S3 authoring trial, the designer selects the authorized Agent test identity, isolated workspace and test submission/capture route; no human learner or Classroom assignment is needed for that test.
+
 Interview the stakeholder to understand the real workflow, pain points, constraints, uncertainties, source ownership, and approval boundaries. Then build and execute an Agent Skills-compliant skill named `event-planning-coordination-brief` that fetches the current disclosed sources, compares feasible options, and prepares a consistent event-planning package.
 
-**Interview rule.** You conduct the stakeholder interview yourself, and the questions are yours. Do not connect a coding agent or any other AI to the interview to run, script, or automate it. The interview transcript is assessed together with the code; a project whose interview was run by an agent is not scored.
+**Interview rule.** You conduct the stakeholder interview yourself, and the questions are yours. Do not connect a coding agent or any other AI to the interview to run, script, or automate it. The interview transcript is assessed together with the code; a project whose interview was run by an agent is not scored. This rule applies to human-assessed work. The separate pre-S3 Agent-only authoring trial uses its declared test route and cannot establish human Ownership or authentic calibration.
 
 Your skill must document one end-to-end command, keep the provided snapshot contract unchanged, and write a snapshot at every required workflow boundary before producing the final planning drafts:
 
@@ -95,7 +106,11 @@ The starter provides this assignment and the unchanged public snapshot schema. Y
 python3 -c "import json,pathlib,sys; s=json.loads(pathlib.Path('snapshot.schema.json').read_text()); assert s['type']=='object'; print(sys.version); print('Public schema readable; business workflow not implemented')"
 ```
 
-Python is used only for the supplied smoke; use any supported language for your Skill. Your own documented end-to-end command must actually retrieve, plan and write the submitted artifacts. Include its dependencies/setup and distinguish a usable draft, bounded partial result and failed run. Submit the source repository and `deliverables/` through the facilitator's assigned assessment entry; that destination must be verified before the run. Do not assume a public repository or send any communications.
+The optional smoke uses Python 3 and its standard library only, reads `snapshot.schema.json` from the working-copy root and expects `Public schema readable; business workflow not implemented`. Missing/malformed JSON or a root `type` other than `object` must exit nonzero; report a damaged supplied contract to the facilitator. It does not validate a learner snapshot, source access or business behavior.
+
+JSON uses quoted field names, arrays for lists and unquoted `null` for unknown values; the supplied schema names the required fields, types and allowed states. Use any supported language for your Skill.
+
+Your own documented end-to-end command must actually retrieve, plan and write the submitted artifacts. Include its dependencies/setup and distinguish a usable draft, bounded partial result and failed run. Submit the source repository and `deliverables/` through the facilitator's assigned assessment entry; that destination must be verified before the run. The public starter does not authorize making your submission public or sending communications.
 
 ## Record meaning and completion states
 
