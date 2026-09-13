@@ -1,6 +1,6 @@
 # Event Planning & Coordination — starter
 
-Read the [formal assignment](https://app.notion.com/p/3da0b700541e813a8a91d0741d6ac96a?pvs=204), [stakeholder interview](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) and the [shared course guide for session capture](https://classroom.google.com/c/ODcyMjA4NTkwNDk2/m/ODc0NzI2NzQzMzQ2/details). The assignment contains the required work, source routes and submission contract.
+Read the [formal assignment](https://private-pecorino-70e.notion.site/Project-C-Event-Planning-Coordination-Brief-Learner-assignment-3da0b700541e813a8a91d0741d6ac96a?source=copy_link), [stakeholder interview](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) and the [shared course guide for session capture](https://classroom.google.com/c/ODcyMjA4NTkwNDk2/m/ODc0NzI2NzQzMzQ2/details). The assignment contains the required work, source routes and submission contract.
 
 ## Start
 
