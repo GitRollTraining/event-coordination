@@ -20,6 +20,8 @@ Create the Skill, implementation and outputs described in the formal assignment.
 
 **Interview rule.** You conduct the stakeholder interview yourself, and the questions are yours. Do not connect a coding agent or any other AI to the interview to run, script, or automate it. The interview transcript is assessed together with the code; a project whose interview was run by an agent is not scored.
 
+- Export your interview as the original Work Sim JSONL, save one final complete file per session under `interviews/`, and commit and push it with your code. Do not rewrite the export. If JSONL export is unavailable, contact the facilitator.
+
 - Use an Agent Skills-capable coding environment. Choose and document your implementation runtime and dependencies; no runtime or install command is supplied here.
 - Follow the [shared course guide for session capture](https://classroom.google.com/c/ODcyMjA4NTkwNDk2/m/ODc0NzI2NzQzMzQ2/details) and verify capture is active before implementation. Keep credentials out of the repository.
 - Meet the [stakeholder](https://work-sim-alpha.catalyte.ai/s/project-c-event-coordination) to understand the work and relevant business sources. Read those online sources through their intended access route; an unavailable source is not permission to substitute repository data.
